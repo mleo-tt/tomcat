@@ -974,7 +974,13 @@ public class Http11Processor extends AbstractProcessor {
                     String value = "timeout=" + TimeUnit.MILLISECONDS.toSeconds(keepAliveTimeout);
 
                     if (maxKeepAliveRequests > 0) {
-                        value += ", max=" + maxKeepAliveRequests;
+                        /*
+                         * We need to add 1 here because the value is already decremented in
+                         * service() by 1. Otherwise the client would see 99 on the first request.
+                         * In HTTPd this value is modified after this code block has been run.
+                         */
+                        int left = socketWrapper.getKeepAliveLeft() + 1;
+                        value += ", max=" + left;
                     }
 
                     headers.setValue("Keep-Alive").setString(value);

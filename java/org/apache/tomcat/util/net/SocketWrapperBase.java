@@ -212,12 +212,16 @@ public abstract class SocketWrapperBase<E> {
         return this.writeTimeout;
     }
 
+    public int getKeepAliveLeft() {
+        return keepAliveLeft;
+    }
+
     public void setKeepAliveLeft(int keepAliveLeft) {
         this.keepAliveLeft = keepAliveLeft;
     }
 
     public int decrementKeepAlive() {
-        return --keepAliveLeft;
+        return keepAliveLeft--;
     }
 
     public String getRemoteHost() {
