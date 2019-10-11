@@ -21,6 +21,7 @@ import java.io.InterruptedIOException;
 import java.nio.ByteBuffer;
 import java.util.Enumeration;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletResponse;
@@ -913,7 +914,7 @@ public class Http11Processor extends AbstractProcessor {
         } else {
             // If the response code supports an entity body and we're on
             // HTTP 1.1 then we chunk unless we have a Connection: close header
-            connectionClosePresent = isConnectionClose(headers);
+            connectionClosePresent = isConnectionValue(headers, Constants.CLOSE);
             if (http11 && entityBody && !connectionClosePresent) {
                 outputBuffer.addActiveFilter(outputFilters[Constants.CHUNKED_FILTER]);
                 contentDelimitation = true;
@@ -957,10 +958,33 @@ public class Http11Processor extends AbstractProcessor {
                 headers.addValue(Constants.CONNECTION).setString(
                         Constants.CLOSE);
             }
-        } else if (!http11 && !getErrorState().isError()) {
-            headers.addValue(Constants.CONNECTION).setString(Constants.KEEPALIVE);
-        }
+        } else if (!getErrorState().isError()) {
+            if (!http11) {
+                headers.addValue(Constants.CONNECTION).setString(Constants.KEEPALIVE);
+            }
 
+            boolean connectionKeepAlivePresent =
+                isConnectionValue(request.getMimeHeaders(), Constants.KEEPALIVE);
+
+            if (connectionKeepAlivePresent) {
+                int keepAliveTimeout = protocol.getKeepAliveTimeout();
+                int maxKeepAliveRequests = protocol.getMaxKeepAliveRequests();
+
+                if (keepAliveTimeout > 0) {
+                    String value = "timeout=" + TimeUnit.MILLISECONDS.toSeconds(keepAliveTimeout);
+
+                    if (maxKeepAliveRequests > 0) {
+                        value += ", max=" + maxKeepAliveRequests;
+                    }
+
+                    headers.setValue("Keep-Alive").setString(value);
+                }
+
+                if (http11) {
+                    headers.addValue(Constants.CONNECTION).setString(Constants.KEEPALIVE);
+                }
+            }
+        }
         // Add server header
         String server = protocol.getServer();
         if (server == null) {
@@ -992,12 +1016,12 @@ public class Http11Processor extends AbstractProcessor {
         outputBuffer.commit();
     }
 
-    private static boolean isConnectionClose(MimeHeaders headers) {
+    private static boolean isConnectionValue(MimeHeaders headers, String value) {
         MessageBytes connection = headers.getValue(Constants.CONNECTION);
         if (connection == null) {
             return false;
         }
-        return connection.equals(Constants.CLOSE);
+        return connection.equals(value);
     }
 
     private void prepareSendfile(OutputFilter[] outputFilters) {
