@@ -23,6 +23,7 @@ import java.util.Enumeration;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletResponse;
@@ -1307,7 +1308,7 @@ public class Http11Processor extends AbstractProcessor {
         } else {
             // If the response code supports an entity body and we're on
             // HTTP 1.1 then we chunk unless we have a Connection: close header
-            connectionClosePresent = isConnectionClose(headers);
+            connectionClosePresent = isConnectionValue(headers, Constants.CLOSE);
             if (entityBody && http11 && !connectionClosePresent) {
                 outputBuffer.addActiveFilter
                     (outputFilters[Constants.CHUNKED_FILTER]);
@@ -1369,10 +1370,33 @@ public class Http11Processor extends AbstractProcessor {
                 headers.addValue(Constants.CONNECTION).setString(
                         Constants.CLOSE);
             }
-        } else if (!http11 && !getErrorState().isError()) {
-            headers.addValue(Constants.CONNECTION).setString(Constants.KEEPALIVE);
-        }
+        } else if (!getErrorState().isError()) {
+            if (!http11) {
+                headers.addValue(Constants.CONNECTION).setString(Constants.KEEPALIVE);
+            }
 
+            boolean connectionKeepAlivePresent =
+                isConnectionValue(request.getMimeHeaders(), Constants.KEEPALIVE);
+
+            if (connectionKeepAlivePresent) {
+                int keepAliveTimeout = endpoint.getKeepAliveTimeout();
+                int maxKeepAliveRequests = getMaxKeepAliveRequests();
+
+                if (keepAliveTimeout > 0) {
+                    String value = "timeout=" + TimeUnit.MILLISECONDS.toSeconds(keepAliveTimeout);
+
+                    if (maxKeepAliveRequests > 0) {
+                        value += ", max=" + maxKeepAliveRequests;
+                    }
+
+                    headers.setValue("Keep-Alive").setString(value);
+                }
+
+                if (http11) {
+                    headers.addValue(Constants.CONNECTION).setString(Constants.KEEPALIVE);
+                }
+            }
+        }
         // Add server header
         if (server == null) {
             if (serverRemoveAppProvidedValues) {
@@ -1403,12 +1427,12 @@ public class Http11Processor extends AbstractProcessor {
         outputBuffer.commit();
     }
 
-    private static boolean isConnectionClose(MimeHeaders headers) {
+    private static boolean isConnectionValue(MimeHeaders headers, String value) {
         MessageBytes connection = headers.getValue(Constants.CONNECTION);
         if (connection == null) {
             return false;
         }
-        return connection.equals(Constants.CLOSE);
+        return connection.equals(value);
     }
 
     private void prepareSendfile(OutputFilter[] outputFilters) {
