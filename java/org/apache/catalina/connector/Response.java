@@ -18,6 +18,7 @@ package org.apache.catalina.connector;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -1401,6 +1402,19 @@ public class Response implements HttpServletResponse {
         }
 
         getCoyoteResponse().setHeader(name, value);
+        dumpRedirectTrace();
+    }
+
+    public void dumpRedirectTrace() {
+        final String location = getHeader("location");
+        if (location != null && location.toLowerCase().contains("gpweb.login") && (getStatus() == 301 || getStatus() == 302)) {
+            final StringWriter sw = new StringWriter();
+            final PrintWriter pw = new PrintWriter(sw);
+
+            new Throwable().printStackTrace(pw);
+
+            log.info("Server has redirected to the login page at: " + sw.toString());
+        }
     }
 
 
@@ -1467,7 +1481,7 @@ public class Response implements HttpServletResponse {
 
         getCoyoteResponse().setStatus(status);
         getCoyoteResponse().setMessage(message);
-
+        dumpRedirectTrace();
     }
 
 
