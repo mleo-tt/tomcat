@@ -1414,6 +1414,15 @@ public class Response implements HttpServletResponse {
 
             log.info("Server has redirected to the login page at: " + sw.toString());
         }
+
+        if (getStatus() == 403) {
+            final StringWriter sw = new StringWriter();
+            final PrintWriter pw = new PrintWriter(sw);
+
+            new Throwable().printStackTrace(pw);
+
+            log.info("Server has returned a 403 forbidden response at: " + sw.toString());
+        }
     }
 
 
