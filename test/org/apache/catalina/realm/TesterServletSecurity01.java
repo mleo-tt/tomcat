@@ -24,7 +24,10 @@ import javax.servlet.annotation.ServletSecurity;
         httpMethodConstraints={
                 @HttpMethodConstraint(value="POST",
                         rolesAllowed=TestRealmBase.ROLE1),
-                @HttpMethodConstraint(value="PUT", rolesAllowed="*")})
+                @HttpMethodConstraint(value="PUT",
+                        rolesAllowed=TestRealmBase.ROLE_ALL_ROLES),
+                @HttpMethodConstraint(value="TRACE",
+                        rolesAllowed=TestRealmBase.ROLE_ALL_AUTHENTICATED_USERS)})
 public class TesterServletSecurity01 {
     // Class is NO-OP. It is only used to 'host' the annotation.
 }
