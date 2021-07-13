@@ -18,7 +18,10 @@ package org.apache.catalina.realm;
 
 import java.lang.reflect.Field;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.security.Principal;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
@@ -108,6 +111,31 @@ public class TestJNDIRealm {
         // THEN
         assertThat(principal, instanceOf(GenericPrincipal.class));
         Assert.assertEquals(ha1(), ((GenericPrincipal)principal).getPassword());
+    }
+
+    @Test
+    public void testErrorRealm() throws Exception {
+        Context context = new TesterContext();
+        final JNDIRealm realm = new JNDIRealm();
+        realm.setContainer(context);
+        realm.setUserSearch("");
+        // Connect to something that will fail
+        realm.setConnectionURL("ldap://127.0.0.1:12345");
+        realm.start();
+
+        final CountDownLatch latch = new CountDownLatch(3);
+        Runnable testThread = new Runnable() {
+            @Override
+            public void run() {
+                realm.authenticate("foo", "bar");
+                latch.countDown();
+            }
+        };
+        (new Thread(testThread)).start();
+        (new Thread(testThread)).start();
+        (new Thread(testThread)).start();
+
+        Assert.assertTrue(latch.await(30, TimeUnit.SECONDS));
     }
 
 
