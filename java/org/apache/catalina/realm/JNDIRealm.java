@@ -2057,7 +2057,7 @@ public class JNDIRealm extends RealmBase {
                         containerLog.trace("Perform a nested group search with base "+ roleBase + " and filter " + filter);
                     }
 
-                    results = searchAsUser(context, user, roleBase, filter, controls,
+                    results = searchAsUser(context, user, base, filter, controls,
                             isRoleSearchAsUser());
 
                     try {
