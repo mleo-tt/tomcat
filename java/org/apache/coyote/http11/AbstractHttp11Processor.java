@@ -825,11 +825,22 @@ public abstract class AbstractHttp11Processor<S> extends AbstractProcessor<S> {
      */
     private void addInputFilter(InputFilter[] inputFilters, String encodingName) {
 
+        if (contentDelimitation) {
+            // Chunked has already been specified and it must be the final
+            // encoding.
+            // 400 - Bad request
+            response.setStatus(400);
+            setErrorState(ErrorState.CLOSE_CLEAN, null);
+            if (getLog().isDebugEnabled()) {
+                getLog().debug(sm.getString("http11processor.request.prepare") +
+                        " Tranfer encoding lists chunked before [" + encodingName + "]");
+            }
+            return;
+        }
+
         // Parsing trims and converts to lower case.
 
-        if (encodingName.equals("identity")) {
-            // Skip
-        } else if (encodingName.equals("chunked")) {
+        if (encodingName.equals("chunked")) {
             getInputBuffer().addActiveFilter
                 (inputFilters[Constants.CHUNKED_FILTER]);
             contentDelimitation = true;
@@ -1540,14 +1551,15 @@ public abstract class AbstractHttp11Processor<S> extends AbstractProcessor<S> {
 
         // Parse transfer-encoding header
         MessageBytes transferEncodingValueMB = null;
-        if (http11) {
+        // HTTP specs say an HTTP 1.1 server should accept any recognised
+        // HTTP 1.x header from a 1.x client unless the specs says otherwise.
+        if (!http09) {
             transferEncodingValueMB = headers.getValue("transfer-encoding");
         }
         if (transferEncodingValueMB != null) {
             List<String> encodingNames = new ArrayList<String>();
             if (TokenList.parseTokenList(headers.values("transfer-encoding"), encodingNames)) {
                 for (String encodingName : encodingNames) {
-                    // "identity" codings are ignored
                     addInputFilter(inputFilters, encodingName);
                 }
             } else {
