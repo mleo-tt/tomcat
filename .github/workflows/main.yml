@@ -1,4 +1,4 @@
-name: CI 6.0.53
+name: tomcat-7.0.104-TT
 
 on:
   push:
