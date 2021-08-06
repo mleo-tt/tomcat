@@ -27,7 +27,7 @@ version.major=7
 version.minor=0
 version.build=104
 version.patch=0
-version.suffix=
+version.suffix=-SP.2
 
 # ----- Source control flags -----
 git.branch=7.0.x
@@ -61,6 +61,10 @@ java.net.preferIPv4Stack=true
 
 # Location of Java7 JDK
 #java.7.home=/path/to/java7/jdk
+java.7.home=/Users/cesar/.sdkman/candidates/java/7u79
+
+# Skip windows installer generation
+skip.installer=true
 
 # Location of GPG executable (used only for releases)
 gpg.exec=/path/to/gpg
