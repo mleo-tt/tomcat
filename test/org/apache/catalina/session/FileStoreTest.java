@@ -18,10 +18,12 @@ package org.apache.catalina.session;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -52,10 +54,22 @@ public class FileStoreTest {
 
     @AfterClass
     public static void cleanup() throws IOException {
+        if(dir.exists()){
+            FileUtils.cleanDirectory(dir);
+            FileUtils.deleteDirectory(dir);
+        }
+    }
+
+    @After
+    public void afterEachTest() throws IOException {
         FileUtils.cleanDirectory(dir);
         FileUtils.deleteDirectory(dir);
     }
 
+//CREATES for each test the following structure
+    //SESS_TEMP y
+    //SESS_TEMP/tmp1.session
+    //SESS_TEMP/tmp2.session
 
     @Before
     public void beforeEachTest() throws IOException {
@@ -84,10 +98,12 @@ public class FileStoreTest {
         Assert.assertEquals(0, fileStore.getSize());
     }
 
-
     @Test
     public void keys() throws Exception {
-        Assert.assertArrayEquals(new String[]{"tmp1", "tmp2"}, fileStore.keys());
+        String[] keys = fileStore.keys();
+        //Need it since FileStore.keys doesn't guarantee any specific array order.
+        Arrays.sort(keys);
+        Assert.assertArrayEquals(new String[]{"tmp1", "tmp2"}, keys);
         fileStore.clear();
         Assert.assertArrayEquals(new String[]{}, fileStore.keys());
     }
