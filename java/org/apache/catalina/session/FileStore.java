@@ -403,14 +403,13 @@ public final class FileStore extends StoreBase {
 
         String filename = id + FILE_EXT;
         File file = new File(storageDir, filename);
-        FileUtil storageDirUtil = new FileUtil(storageDir);
+        File canonicalFile = file.getCanonicalFile();
 
         // Check the file is within the storage directory
-        if (!storageDirUtil.isParentOf(file)) {
+        if (!canonicalFile.getPath().startsWith(storageDir.getCanonicalFile().getPath())) {
             log.warn(sm.getString("fileStore.invalid", file.getPath(), id));
             return null;
         }
-
-        return file;
+        return canonicalFile;
     }
 }
