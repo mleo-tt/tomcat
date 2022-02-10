@@ -133,6 +133,10 @@
         <bug>65235</bug>: Add missing attributes to the MBean descriptor file
         for the <code>RemoteIpValve</code>. (markt)
       </fix>
+      <fix>
+        Make the calculation of the session storage location more robust when
+        using file based persistent storage. (markt)
+      </fix>
     </changelog>
   </subsection>
   <subsection name="Web applications">
