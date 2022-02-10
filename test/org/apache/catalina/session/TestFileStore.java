@@ -18,10 +18,12 @@ package org.apache.catalina.session;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -30,13 +32,16 @@ import org.apache.tomcat.unittest.TesterContext;
 import org.apache.tomcat.unittest.TesterServletContext;
 import org.apache.tomcat.util.http.fileupload.FileUtils;
 
-public class FileStoreTest {
+public class TestFileStore {
 
     private static final String SESS_TEMPPATH = "SESS_TEMP";
+    private static final String NON_SESS_TEMPPATH = "NON_SESS_TEMPPATH";
     private static final File dir = new File(SESS_TEMPPATH);
+    private static final File dir_non_sess = new File(NON_SESS_TEMPPATH);
     private static FileStore fileStore;
     private static File file1 = new File(SESS_TEMPPATH + "/tmp1.session");
     private static File file2 = new File(SESS_TEMPPATH + "/tmp2.session");
+    private static File file3 = new File(NON_SESS_TEMPPATH + "/tmp3.session");
     private static Manager manager = new StandardManager();
 
 
@@ -52,8 +57,22 @@ public class FileStoreTest {
 
     @AfterClass
     public static void cleanup() throws IOException {
+        if (dir.exists()) {
+            FileUtils.cleanDirectory(dir);
+            FileUtils.deleteDirectory(dir);
+        }
+        if (dir_non_sess.exists()) {
+            FileUtils.cleanDirectory(dir_non_sess);
+            FileUtils.deleteDirectory(dir_non_sess);
+        }
+    }
+
+    @After
+    public void afterEachTest() throws IOException {
         FileUtils.cleanDirectory(dir);
         FileUtils.deleteDirectory(dir);
+        FileUtils.cleanDirectory(dir_non_sess);
+        FileUtils.deleteDirectory(dir_non_sess);
     }
 
 
@@ -67,6 +86,12 @@ public class FileStoreTest {
             Assert.fail();
         }
         if (!file2.createNewFile()) {
+            Assert.fail();
+        }
+        if (!dir_non_sess.mkdir()) {
+            Assert.fail();
+        }
+        if (!file3.createNewFile()) {
             Assert.fail();
         }
     }
@@ -84,10 +109,12 @@ public class FileStoreTest {
         Assert.assertEquals(0, fileStore.getSize());
     }
 
-
     @Test
     public void keys() throws Exception {
-        Assert.assertArrayEquals(new String[]{"tmp1", "tmp2"}, fileStore.keys());
+        String[] keys = fileStore.keys();
+        //Need it since FileStore.keys doesn't guarantee any specific array order.
+        Arrays.sort(keys);
+        Assert.assertArrayEquals(new String[]{"tmp1", "tmp2"}, keys);
         fileStore.clear();
         Assert.assertArrayEquals(new String[]{}, fileStore.keys());
     }
@@ -98,4 +125,18 @@ public class FileStoreTest {
         fileStore.remove("tmp1");
         Assert.assertEquals(1, fileStore.getSize());
     }
+
+
+    @Test
+    public void loadInvalidPathTest() throws Exception {
+        Assert.assertNull(fileStore.load("../" + NON_SESS_TEMPPATH + "/tmp3"));
+    }
+
+    @Test
+    public void saveInvalidPathTest() throws Exception {
+        fileStore.remove("../" + NON_SESS_TEMPPATH + "/tmp3");
+        //Since is an invalid Path, remove shouldn't be processed.
+        Assert.assertTrue(file3.exists());
+    }
+
 }
