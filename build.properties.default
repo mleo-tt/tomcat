@@ -33,7 +33,7 @@ version.major=9
 version.minor=0
 version.build=56
 version.patch=0
-version.suffix=
+version.suffix=-TT.1
 
 # ----- Reproducible builds -----
 # Uncomment and set to current time for reproducible builds
@@ -70,6 +70,8 @@ test.coverage=false
 
 # Note the FindBugs is LGPL licensed
 execute.findbugs=false
+
+skip.installer=true
 
 # Some platforms (e.g. OSX El Capitan) require IPv4 to be the default for the
 # multicast tests to work
