@@ -27,7 +27,7 @@ version.major=9
 version.minor=0
 version.build=52
 version.patch=0
-version.suffix=
+version.suffix=-TT.1
 
 # ----- Reproducible builds -----
 # Uncomment and set to current time for reproducible builds
@@ -68,6 +68,9 @@ execute.findbugs=false
 # Some platforms (e.g. OSX El Capitan) require IPv4 to be the default for the
 # multicast tests to work
 java.net.preferIPv4Stack=false
+
+# Skip windows installer generation
+skip.installer=true
 
 # Specify the default (true) else the empty string will be used which
 # effectively changes the setting to false
