@@ -145,6 +145,10 @@
         <bug>65235</bug>: Correct name of <code>changeLocalName</code> in the
         documentation for the <code>RemoteIpValve</code>. (markt)
       </fix>
+      <fix>
+        Examples. Fix CVE-2022-34305, a low severity XSS vulnerability in the
+        Form authentication example. (markt)
+      </fix>
     </changelog>
   </subsection>
   <subsection name="Other">
