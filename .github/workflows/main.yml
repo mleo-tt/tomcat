@@ -41,7 +41,7 @@ jobs:
       run: unzip -qq tomcat6-build-libs-.zip -d /home/runner/
   
     - name: replace java.7.home
-      run: sed -i.bak 's:.*java.7.home.*:java.7.home=/opt/hostedtoolcache/jdk/7.0.332/x64:' build.properties.default
+      run: sed -i.bak 's:.*java.7.home.*:java.7.home=/opt/hostedtoolcache/jdk/7.0.342/x64:' build.properties.default
     
     - name: ant_build
       run: ant
