@@ -602,7 +602,7 @@ public abstract class AbstractProtocol<S> implements ProtocolHandler,
                 return SocketState.CLOSED;
             }
 
-            Processor<S> processor = connections.get(socket);
+            Processor<S> processor = connections.remove(socket);
             if (status == SocketStatus.DISCONNECT && processor == null) {
                 // Nothing to do. Endpoint requested a close and there is no
                 // longer a processor associated with this socket.
@@ -670,7 +670,7 @@ public abstract class AbstractProtocol<S> implements ProtocolHandler,
                         // Mark the connection as upgraded
                         wrapper.setUpgraded(true);
                         // Associate with the processor with the connection
-                        connections.put(socket, processor);
+                        // connections.put(socket, processor);
                         // Initialise the upgrade handler (which may trigger
                         // some IO using the new protocol which is why the lines
                         // above are necessary)
