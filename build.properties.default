@@ -27,7 +27,7 @@ version.major=7
 version.minor=0
 version.build=109
 version.patch=0
-version.suffix=-TT.3
+version.suffix=-TT.4
 
 # ----- Source control flags -----
 git.branch=7.0.x
@@ -61,7 +61,7 @@ java.net.preferIPv4Stack=true
 
 # Location of Java7 JDK
 #java.7.home=/path/to/java7/jdk
-#java.7.home=/Users/cesar/.sdkman/candidates/java/7u79
+#java.7.home=/Users/cesarh/.sdkman/candidates/java/7u79
 
 # Skip windows installer generation
 skip.installer=true
