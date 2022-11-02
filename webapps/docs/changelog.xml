@@ -112,6 +112,11 @@
         use of fully qualified class names in 10.1.14 that broke the jdbc-pool.
         (markt)
       </fix>
+      <fix>
+        <bug>66331</bug>: Fix a regression in refactoring for <code>Stack</code>
+        on the <code>SystemLogHandler</code> which caught incorrect exception.
+        (lihan)
+      </fix>
     </changelog>
   </subsection>
   <subsection name="Other">
