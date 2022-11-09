@@ -166,6 +166,11 @@
         provided error code during error page processing rather than assuming an
         error code of 500. (markt)
       </fix>
+      <fix>
+        Escape values used to construct output for the
+        <code>JsonErrorReportValve</code> to ensure that it always outputs valid
+        JSON. (markt)
+      </fix>
     </changelog>
   </subsection>
   <subsection name="Coyote">
