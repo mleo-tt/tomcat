@@ -198,6 +198,10 @@ public class TestInternalInputBuffer extends TomcatBaseTest {
                 // TAB is allowed
                 continue;
             }
+            if (i == '\n') {
+                // LF is the optional line terminator
+                continue;
+            }
             doTestBug51557InvalidCharInValue((char) i);
             tearDown();
             setUp();
