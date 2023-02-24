@@ -170,6 +170,10 @@
         Update the packaged version of the Tomcat Native Library to 1.2.28.
         (markt)
       </update>
+      <update>
+        Update the internal fork of Apache Commons FileUpload to aa8eff6
+        (2022-11-29, 2.0-SNAPSHOT). (markt)
+      </update>
     </changelog>
   </subsection></section>
 <section name="Tomcat 7.0.108 (violetagg)" rtext="released 2021-02-05">
