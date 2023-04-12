@@ -137,6 +137,11 @@
         Make the calculation of the session storage location more robust when
         using file based persistent storage. (markt)
       </fix>
+      <fix>
+        <bug>66471</bug>: Fix JSessionId secure attribute missing When
+        <code>RemoteIpFilter</code> determines that this request was submitted
+        via a secure channel. (lihan)
+      </fix>
     </changelog>
   </subsection>
   <subsection name="Web applications">
