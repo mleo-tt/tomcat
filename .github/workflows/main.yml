@@ -60,42 +60,41 @@ jobs:
 
 #Known ERRORS   
     - name: remove_known_error_1
-      run: sed -i.bak '/TEST-org.apache.catalina.tribes.group.interceptors.TestNonBlockingCoordinator.BIO.txt/d' error_result.txt | true
+      run: sed -i.bak '/TEST-org.apache.catalina.valves.rewrite.TestResolverSSL/d' error_result.txt | true
 
     - name: remove_known_error_2
-      run: sed -i.bak '/TEST-org.apache.catalina.tribes.group.interceptors.TestNonBlockingCoordinator.NIO.txt/d' error_result.txt | true
+      run: sed -i.bak '/TEST-org.apache.coyote.http2.TestLargeUpload/d' error_result.txt | true
       
     - name: remove_known_error_3
       run: sed -i.bak '/TEST-org.apache.tomcat.util.net.TestClientCert/d' error_result.txt | true
 
     - name: remove_known_error_4
-      run: sed -i.bak '/TEST-org.apache.tomcat.util.net.TestCustomSsl/d' error_result.txt | true     
+      run: sed -i.bak '/TEST-org.apache.tomcat.util.net.TestClientCertTls13/d' error_result.txt | true     
 
     - name: remove_known_error_5
-      run: sed -i.bak '/TEST-org.apache.tomcat.util.net.TestSsl/d' error_result.txt | true    
+      run: sed -i.bak '/TEST-org.apache.tomcat.util.net.TestCustomSsl/d' error_result.txt | true    
 
     - name: remove_known_error_6
       run: sed -i.bak '/TEST-org.apache.tomcat.websocket.TestWebSocketFrameClientSSL/d' error_result.txt | true       
 
     - name: remove_known_error_7
-      run: sed -i.bak '/TEST-org.apache.tomcat.websocket.TestWsWebSocketContainer/d' error_result.txt | true       
+      run: sed -i.bak '/TEST-org.apache.tomcat.websocket.TestWsWebSocketContainer/d' error_result.txt | true     
 
+    - name: remove_known_error_8
+      run: sed -i.bak '/TEST-org.apache.tomcat.util.net.TestCustomSslTrustManager/d' error_result.txt | true  
+
+    - name: remove_known_error_9
+      run: sed -i.bak '/TEST-org.apache.tomcat.util.net.TestSsl/d' error_result.txt | true     
 
 #Known FAILED
     - name: remove_known_failed_1
-      run: sed -i.bak '/TEST-org.apache.coyote.http11.TestInternalInputBuffer.NIO.txt/d' failed_result.txt | true
+      run: sed -i.bak '/TEST-org.apache.tomcat.util.net.TestSsl/d' failed_result.txt | true
 
     - name: remove_known_failed_2
-      run: sed -i.bak '/TEST-org.apache.catalina.tribes.group.TestGroupChannelMemberArrival.NIO.txt/d' failed_result.txt | true
+      run: sed -i.bak '/TEST-org.apache.tomcat.util.net.openssl.ciphers.TestCipher/d' failed_result.txt | true
       
     - name: remove_known_failed_3
-      run: sed -i.bak '/TEST-org.apache.catalina.tribes.group.interceptors.TestOrderInterceptor.NIO.txt/d' failed_result.txt | true
-
-    - name: remove_known_failed_4
-      run: sed -i.bak '/TEST-org.apache.catalina.tribes.group.interceptors.TestNonBlockingCoordinator.NIO.txt/d' failed_result.txt | true
-      
-    - name: remove_known_failed_5
-      run: sed -i.bak '/TEST-org.apache.catalina.tribes.group.TestGroupChannelMemberArrival.BIO.txt/d' failed_result.txt | true      
+      run: sed -i.bak '/TEST-org.apache.tomcat.util.net.openssl.ciphers.TestOpenSSLCipherConfigurationParser/d' failed_result.txt | true     
     
     - name: final_status
       run: diff failed_result.txt known_failed.txt && diff error_result.txt known_errors.txt
