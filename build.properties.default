@@ -62,7 +62,7 @@ execute.spotbugs=false
 execute.test.nio=true
 execute.test.nio2=true
 # Still requires APR/native library to be present
-execute.test.apr=true
+execute.test.apr=false
 # Stop testing if a failure occurs
 test.haltonfailure=false
 # Activate AccessLog during testing
