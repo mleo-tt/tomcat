@@ -125,6 +125,11 @@
         dotall mode to avoid unexpected behaviour if the URL includes encoded
         line terminators. (markt)
       </fix>
+      <fix>
+        <bug>66471</bug>: Fix JSessionId secure attribute missing When
+        <code>RemoteIpFilter</code> determines that this request was submitted
+        via a secure channel. (lihan)
+      </fix>
     </changelog>
   </subsection>
   <subsection name="Coyote">
