@@ -16,6 +16,7 @@
  */
 package org.apache.jasper.compiler;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,19 +51,19 @@ import org.xml.sax.Attributes;
  * @author Mark Roth
  */
 
-abstract class Node implements TagConstants {
+abstract class Node implements TagConstants, Serializable {
 
     private static final VariableInfo[] ZERO_VARIABLE_INFO = {};
 
-    protected Attributes attrs;
+    protected transient Attributes attrs;
 
     // xmlns attributes that represent tag libraries (only in XML syntax)
-    protected Attributes taglibAttrs;
+    protected transient Attributes taglibAttrs;
 
     /*
      * xmlns attributes that do not represent tag libraries (only in XML syntax)
      */
-    protected Attributes nonTaglibXmlnsAttrs;
+    protected transient Attributes nonTaglibXmlnsAttrs;
 
     protected Nodes body;
 
@@ -74,7 +75,7 @@ abstract class Node implements TagConstants {
 
     protected int endJavaLine;
 
-    protected Node parent;
+    protected transient Node parent;
 
     protected Nodes namedAttributeNodes; // cached for performance
 
@@ -2099,7 +2100,7 @@ abstract class Node implements TagConstants {
      * jsp:attribute standard action).
      */
 
-    public static class JspAttribute {
+    public static class JspAttribute implements Serializable {
 
         private final String qName;
 
@@ -2115,7 +2116,7 @@ abstract class Node implements TagConstants {
 
         private final ELNode.Nodes el;
 
-        private final TagAttributeInfo tai;
+        private final transient TagAttributeInfo tai;
 
         // If true, this JspAttribute represents a <jsp:attribute>
         private final boolean namedAttribute;
@@ -2323,7 +2324,7 @@ abstract class Node implements TagConstants {
      * An ordered list of Node, used to represent the body of an element, or a
      * jsp page of jsp document.
      */
-    public static class Nodes {
+    public static class Nodes implements Serializable {
 
         private final List<Node> list;
 

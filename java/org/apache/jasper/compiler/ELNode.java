@@ -16,6 +16,7 @@
  */
 package org.apache.jasper.compiler;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -33,7 +34,7 @@ import org.apache.jasper.JasperException;
  * @author Kin-man Chung
  */
 
-abstract class ELNode {
+abstract class ELNode implements Serializable {
 
     public abstract void accept(Visitor v) throws JasperException;
 
@@ -119,7 +120,7 @@ abstract class ELNode {
         private final String name;
         private final String originalText;
         private String uri;
-        private FunctionInfo functionInfo;
+        private transient FunctionInfo functionInfo;
         private String methodName;
         private String[] parameters;
 
@@ -182,7 +183,7 @@ abstract class ELNode {
     /**
      * An ordered list of ELNode.
      */
-    public static class Nodes {
+    public static class Nodes implements Serializable {
 
         /* Name used for creating a map for the functions in this
            EL expression, for communication to Generator.

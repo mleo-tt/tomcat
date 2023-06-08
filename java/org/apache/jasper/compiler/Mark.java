@@ -16,6 +16,7 @@
  */
 package org.apache.jasper.compiler;
 
+import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -26,7 +27,7 @@ import org.apache.jasper.JspCompilationContext;
  *
  * @author Anil K. Vijendran
  */
-final class Mark {
+final class Mark implements Serializable {
 
     // position within current stream
     int cursor, line, col;
@@ -37,7 +38,7 @@ final class Mark {
     // name of the current file
     private String fileName;
 
-    private JspCompilationContext ctxt;
+    private transient JspCompilationContext ctxt;
 
     /**
      * Constructor

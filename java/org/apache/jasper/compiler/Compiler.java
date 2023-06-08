@@ -16,12 +16,7 @@
  */
 package org.apache.jasper.compiler;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.net.JarURLConnection;
 import java.net.URI;
 import java.net.URL;
@@ -180,6 +175,7 @@ public abstract class Compiler {
 
         ctxt.checkOutputDir();
         String javaFileName = ctxt.getServletJavaFileName();
+        String serModelFileName = javaFileName.replaceAll(".java$", ".ser");
 
         try {
             /*
@@ -255,6 +251,16 @@ public abstract class Compiler {
 
             // generate servlet .java file
             try (ServletWriter writer = setupContextWriter(javaFileName)) {
+                // save the object model to an output stream so we can pick through it
+                try {
+                    final FileOutputStream modelOs = new FileOutputStream(serModelFileName);
+                    final ObjectOutputStream objectOutputStream = new ObjectOutputStream(modelOs);
+                    objectOutputStream.writeObject(pageNodes);
+                    objectOutputStream.close();
+                } catch (Exception e) {
+                    log.warn("Unable to serialize object model to " + serModelFileName);
+                }
+
                 Generator.generate(writer, this, pageNodes);
             }
 
