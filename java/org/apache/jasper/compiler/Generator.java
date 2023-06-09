@@ -54,6 +54,8 @@ import org.apache.jasper.TrimSpacesOption;
 import org.apache.jasper.compiler.Node.ChildInfoBase;
 import org.apache.jasper.compiler.Node.NamedAttribute;
 import org.apache.jasper.runtime.JspRuntimeLibrary;
+import org.apache.juli.logging.Log;
+import org.apache.juli.logging.LogFactory;
 import org.xml.sax.Attributes;
 
 /**
@@ -78,6 +80,8 @@ import org.xml.sax.Attributes;
  */
 
 class Generator {
+
+    private final Log log = LogFactory.getLog(Generator.class); // must not be static
 
     private static final Class<?>[] OBJECT_CLASS = { Object.class };
 
@@ -2121,6 +2125,7 @@ class Generator {
                     // Leading and trailing whitespace can be trimmed so remove
                     // it here as the regex won't remove it.
                     text = revisedText.trim();
+                    log.warn("Text trimmed from " + n.getText() + " to " + text);
                 }
             }
 
