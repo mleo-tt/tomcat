@@ -27,7 +27,7 @@ version.major=7
 version.minor=0
 version.build=109
 version.patch=0
-version.suffix=-TT.7
+version.suffix=-TT.8
 
 # ----- Source control flags -----
 git.branch=7.0.x
