@@ -39,6 +39,8 @@ import javax.servlet.jsp.tagext.VariableInfo;
 import org.apache.jasper.Constants;
 import org.apache.jasper.JasperException;
 import org.apache.jasper.compiler.tagplugin.TagPluginContext;
+import org.apache.juli.logging.Log;
+import org.apache.juli.logging.LogFactory;
 import org.xml.sax.Attributes;
 
 /**
@@ -52,6 +54,8 @@ import org.xml.sax.Attributes;
  */
 
 abstract class Node implements TagConstants, Serializable {
+
+    protected transient final Log log = LogFactory.getLog(Node.class); // must not be static
 
     private static final VariableInfo[] ZERO_VARIABLE_INFO = {};
 
@@ -399,6 +403,23 @@ abstract class Node implements TagConstants, Serializable {
         }
     }
 
+    @Override
+    public String toString() {
+        return getClass().getName() + "{" +
+            "attrs=" + attrs +
+            ", taglibAttrs=" + taglibAttrs +
+            ", nonTaglibXmlnsAttrs=" + nonTaglibXmlnsAttrs +
+            ", body=" + body +
+            ", text='" + text + '\'' +
+            ", startMark=" + startMark +
+            ", beginJavaLine=" + beginJavaLine +
+            ", endJavaLine=" + endJavaLine +
+            ", namedAttributeNodes=" + namedAttributeNodes +
+            ", qName='" + qName + '\'' +
+            ", localName='" + localName + '\'' +
+            ", innerClassName='" + innerClassName + '\'' +
+            '}';
+    }
 
     /**
      * Represents the root of a Jsp page or Jsp document
@@ -465,6 +486,7 @@ abstract class Node implements TagConstants, Serializable {
 
         @Override
         public void accept(Visitor v) throws JasperException {
+            super.log.info(v.getClass().getName() + " visiting " + this);
             v.visit(this);
         }
 
@@ -549,6 +571,7 @@ abstract class Node implements TagConstants, Serializable {
 
         @Override
         public void accept(Visitor v) throws JasperException {
+            super.log.info(v.getClass().getName() + " visiting " + this);
             v.visit(this);
         }
     }
@@ -574,6 +597,7 @@ abstract class Node implements TagConstants, Serializable {
 
         @Override
         public void accept(Visitor v) throws JasperException {
+            super.log.info(v.getClass().getName() + " visiting " + this);
             v.visit(this);
         }
 
@@ -638,6 +662,7 @@ abstract class Node implements TagConstants, Serializable {
 
         @Override
         public void accept(Visitor v) throws JasperException {
+            super.log.info(v.getClass().getName() + " visiting " + this);
             v.visit(this);
         }
     }
@@ -654,6 +679,7 @@ abstract class Node implements TagConstants, Serializable {
 
         @Override
         public void accept(Visitor v) throws JasperException {
+            super.log.info(v.getClass().getName() + " visiting " + this);
             v.visit(this);
         }
     }
@@ -678,6 +704,7 @@ abstract class Node implements TagConstants, Serializable {
 
         @Override
         public void accept(Visitor v) throws JasperException {
+            super.log.info(v.getClass().getName() + " visiting " + this);
             v.visit(this);
         }
 
@@ -728,6 +755,7 @@ abstract class Node implements TagConstants, Serializable {
 
         @Override
         public void accept(Visitor v) throws JasperException {
+            super.log.info(v.getClass().getName() + " visiting " + this);
             v.visit(this);
         }
     }
@@ -751,6 +779,7 @@ abstract class Node implements TagConstants, Serializable {
 
         @Override
         public void accept(Visitor v) throws JasperException {
+            super.log.info(v.getClass().getName() + " visiting " + this);
             v.visit(this);
         }
     }
@@ -773,6 +802,7 @@ abstract class Node implements TagConstants, Serializable {
 
         @Override
         public void accept(Visitor v) throws JasperException {
+            super.log.info(v.getClass().getName() + " visiting " + this);
             v.visit(this);
         }
     }
@@ -795,6 +825,7 @@ abstract class Node implements TagConstants, Serializable {
 
         @Override
         public void accept(Visitor v) throws JasperException {
+            super.log.info(v.getClass().getName() + " visiting " + this);
             v.visit(this);
         }
     }
@@ -810,6 +841,7 @@ abstract class Node implements TagConstants, Serializable {
 
         @Override
         public void accept(Visitor v) throws JasperException {
+            super.log.info(v.getClass().getName() + " visiting " + this);
             v.visit(this);
         }
     }
@@ -889,6 +921,7 @@ abstract class Node implements TagConstants, Serializable {
 
         @Override
         public void accept(Visitor v) throws JasperException {
+            super.log.info(v.getClass().getName() + " visiting " + this);
             v.visit(this);
         }
     }
@@ -911,6 +944,7 @@ abstract class Node implements TagConstants, Serializable {
 
         @Override
         public void accept(Visitor v) throws JasperException {
+            super.log.info(v.getClass().getName() + " visiting " + this);
             v.visit(this);
         }
     }
@@ -932,6 +966,7 @@ abstract class Node implements TagConstants, Serializable {
 
         @Override
         public void accept(Visitor v) throws JasperException {
+            super.log.info(v.getClass().getName() + " visiting " + this);
             v.visit(this);
         }
     }
@@ -953,6 +988,7 @@ abstract class Node implements TagConstants, Serializable {
 
         @Override
         public void accept(Visitor v) throws JasperException {
+            super.log.info(v.getClass().getName() + " visiting " + this);
             v.visit(this);
         }
 
@@ -989,6 +1025,7 @@ abstract class Node implements TagConstants, Serializable {
 
         @Override
         public void accept(Visitor v) throws JasperException {
+            super.log.info(v.getClass().getName() + " visiting " + this);
             v.visit(this);
         }
 
@@ -1018,6 +1055,7 @@ abstract class Node implements TagConstants, Serializable {
 
         @Override
         public void accept(Visitor v) throws JasperException {
+            super.log.info(v.getClass().getName() + " visiting " + this);
             v.visit(this);
         }
     }
@@ -1039,6 +1077,7 @@ abstract class Node implements TagConstants, Serializable {
 
         @Override
         public void accept(Visitor v) throws JasperException {
+            super.log.info(v.getClass().getName() + " visiting " + this);
             v.visit(this);
         }
     }
@@ -1063,6 +1102,7 @@ abstract class Node implements TagConstants, Serializable {
 
         @Override
         public void accept(Visitor v) throws JasperException {
+            super.log.info(v.getClass().getName() + " visiting " + this);
             v.visit(this);
         }
 
@@ -1095,6 +1135,7 @@ abstract class Node implements TagConstants, Serializable {
 
         @Override
         public void accept(Visitor v) throws JasperException {
+            super.log.info(v.getClass().getName() + " visiting " + this);
             v.visit(this);
         }
 
@@ -1125,6 +1166,7 @@ abstract class Node implements TagConstants, Serializable {
 
         @Override
         public void accept(Visitor v) throws JasperException {
+            super.log.info(v.getClass().getName() + " visiting " + this);
             v.visit(this);
         }
     }
@@ -1149,6 +1191,7 @@ abstract class Node implements TagConstants, Serializable {
 
         @Override
         public void accept(Visitor v) throws JasperException {
+            super.log.info(v.getClass().getName() + " visiting " + this);
             v.visit(this);
         }
 
@@ -1181,6 +1224,7 @@ abstract class Node implements TagConstants, Serializable {
 
         @Override
         public void accept(Visitor v) throws JasperException {
+            super.log.info(v.getClass().getName() + " visiting " + this);
             v.visit(this);
         }
 
@@ -1215,6 +1259,7 @@ abstract class Node implements TagConstants, Serializable {
 
         @Override
         public void accept(Visitor v) throws JasperException {
+            super.log.info(v.getClass().getName() + " visiting " + this);
             v.visit(this);
         }
 
@@ -1251,6 +1296,7 @@ abstract class Node implements TagConstants, Serializable {
 
         @Override
         public void accept(Visitor v) throws JasperException {
+            super.log.info(v.getClass().getName() + " visiting " + this);
             v.visit(this);
         }
 
@@ -1285,6 +1331,7 @@ abstract class Node implements TagConstants, Serializable {
 
         @Override
         public void accept(Visitor v) throws JasperException {
+            super.log.info(v.getClass().getName() + " visiting " + this);
             v.visit(this);
         }
 
@@ -1325,6 +1372,7 @@ abstract class Node implements TagConstants, Serializable {
 
         @Override
         public void accept(Visitor v) throws JasperException {
+            super.log.info(v.getClass().getName() + " visiting " + this);
             v.visit(this);
         }
     }
@@ -1552,6 +1600,7 @@ abstract class Node implements TagConstants, Serializable {
 
         @Override
         public void accept(Visitor v) throws JasperException {
+            super.log.info(v.getClass().getName() + " visiting " + this);
             v.visit(this);
         }
 
@@ -1840,6 +1889,7 @@ abstract class Node implements TagConstants, Serializable {
 
         @Override
         public void accept(Visitor v) throws JasperException {
+            super.log.info(v.getClass().getName() + " visiting " + this);
             v.visit(this);
         }
 
@@ -1865,6 +1915,7 @@ abstract class Node implements TagConstants, Serializable {
 
         @Override
         public void accept(Visitor v) throws JasperException {
+            super.log.info(v.getClass().getName() + " visiting " + this);
             v.visit(this);
         }
     }
@@ -1918,6 +1969,7 @@ abstract class Node implements TagConstants, Serializable {
 
         @Override
         public void accept(Visitor v) throws JasperException {
+            super.log.info(v.getClass().getName() + " visiting " + this);
             v.visit(this);
         }
 
@@ -2012,6 +2064,7 @@ abstract class Node implements TagConstants, Serializable {
 
         @Override
         public void accept(Visitor v) throws JasperException {
+            super.log.info(v.getClass().getName() + " visiting " + this);
             v.visit(this);
         }
     }
@@ -2029,6 +2082,7 @@ abstract class Node implements TagConstants, Serializable {
 
         @Override
         public void accept(Visitor v) throws JasperException {
+            super.log.info(v.getClass().getName() + " visiting " + this);
             v.visit(this);
         }
 
@@ -2400,6 +2454,15 @@ abstract class Node implements TagConstants, Serializable {
 
         public void setGeneratedInBuffer(boolean g) {
             generatedInBuffer = g;
+        }
+
+        @Override
+        public String toString() {
+            return "Nodes{" +
+                "list=" + list +
+                ", root=" + root +
+                ", generatedInBuffer=" + generatedInBuffer +
+                '}';
         }
     }
 
