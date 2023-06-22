@@ -2112,24 +2112,28 @@ class Generator {
         @Override
         public void visit(Node.TemplateText n) throws JasperException {
 
-            String text = n.getText();
+            String nodeText = n.getText();
+            log.info(this.getClass().getName() + ".visit(Node.TemplateText), nodeText = " + nodeText + ", node.text=" + n.text + ", node = " + n);
+
             // If the extended option is being used attempt to minimize the
             // frequency of regex operations.
-            if (ctxt.getOptions().getTrimSpaces().equals(TrimSpacesOption.EXTENDED) && text.contains("\n")) {
+            if (ctxt.getOptions().getTrimSpaces().equals(TrimSpacesOption.EXTENDED) && nodeText.contains("\n")) {
                 // Ensure there are no <pre> or </pre> tags embedded in this
                 // text - if there are, we want to NOT modify the whitespace.
-                Matcher preMatcher = PRE_TAG_PATTERN.matcher(text);
+                Matcher preMatcher = PRE_TAG_PATTERN.matcher(nodeText);
                 if (!preMatcher.matches()) {
-                    Matcher matcher = BLANK_LINE_PATTERN.matcher(text);
+                    Matcher matcher = BLANK_LINE_PATTERN.matcher(nodeText);
                     String revisedText = matcher.replaceAll("\n");
                     // Leading and trailing whitespace can be trimmed so remove
                     // it here as the regex won't remove it.
-                    text = revisedText.trim();
-                    log.warn("Text trimmed from " + n.getText() + " to " + text);
+                    nodeText = revisedText.trim();
+                    log.warn("Text trimmed from " + n.getText() + " to " + nodeText);
                 }
             }
 
-            int textSize = text.length();
+            int textSize = nodeText.length();
+            log.info(this.getClass().getName() + ".visit(Node.TemplateText), textSize = " + textSize);
+
             if (textSize == 0) {
                 return;
             }
@@ -2139,7 +2143,7 @@ class Generator {
                 n.setBeginJavaLine(out.getJavaLine());
                 int lineInc = 0;
                 for (int i = 0; i < textSize; i++) {
-                    char ch = text.charAt(i);
+                    char ch = nodeText.charAt(i);
                     out.printil("out.write(" + quote(ch) + ");");
                     if (i > 0) {
                         n.addSmap(lineInc);
@@ -2167,7 +2171,7 @@ class Generator {
                 // String constants are limited to 64k bytes
                 // Limit string constants here to 16k characters
                 int textIndex = 0;
-                int textLength = text.length();
+                int textLength = nodeText.length();
                 while (textIndex < textLength) {
                     int len = 0;
                     if (textLength - textIndex > 16384) {
@@ -2175,7 +2179,7 @@ class Generator {
                     } else {
                         len = textLength - textIndex;
                     }
-                    String output = text.substring(textIndex, textIndex + len);
+                    String output = nodeText.substring(textIndex, textIndex + len);
                     String charArrayName = textMap.get(output);
                     if (charArrayName == null) {
                         charArrayName = "_jspx_char_array_" + charArrayCount++;
@@ -2203,8 +2207,8 @@ class Generator {
             int initLength = sb.length();
             int count = JspUtil.CHUNKSIZE;
             int srcLine = 0; // relative to starting source line
-            for (int i = 0; i < text.length(); i++) {
-                char ch = text.charAt(i);
+            for (int i = 0; i < nodeText.length(); i++) {
+                char ch = nodeText.charAt(i);
                 --count;
                 switch (ch) {
                 case '"':
@@ -2224,7 +2228,7 @@ class Generator {
                         // Generate an out.write() when see a '\n' in template
                         sb.append("\");");
                         out.println(sb.toString());
-                        if (i < text.length() - 1) {
+                        if (i < nodeText.length() - 1) {
                             out.printin();
                         }
                         sb.setLength(initLength);

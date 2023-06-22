@@ -183,6 +183,8 @@ abstract class Node implements TagConstants, Serializable {
         this.text = text;
         this.startMark = start;
         addToParent(parent);
+
+        log.info(this.getClass().getName() + " Set text (constructor)=" + text);
     }
 
     public String getQName() {
@@ -2095,9 +2097,11 @@ abstract class Node implements TagConstants, Serializable {
                 index++;
             }
             text = text.substring(index);
+            log.info(this.getClass().getName() + " Set text(ltrim)=" + text);
         }
 
         public void setText(String text) {
+            log.info(this.getClass().getName() + " Set text (setter)=" + text);
             this.text = text;
         }
 
@@ -2110,6 +2114,7 @@ abstract class Node implements TagConstants, Serializable {
                 index--;
             }
             text = text.substring(0, index);
+            log.info(this.getClass().getName() + " Set text(rtrim)=" + text);
         }
 
         /**
