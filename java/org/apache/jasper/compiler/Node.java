@@ -16,7 +16,9 @@
  */
 package org.apache.jasper.compiler;
 
+import java.io.PrintWriter;
 import java.io.Serializable;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -2078,14 +2080,24 @@ abstract class Node implements TagConstants, Serializable {
 
         private ArrayList<Integer> extraSmap = null;
 
+        private boolean debugSetText = false;
+
         TemplateText(String text, Mark start, Node parent) {
             super(null, null, text, start, parent);
         }
 
         @Override
         public void accept(Visitor v) throws JasperException {
+            // only print the stack trace if this is happening if we're being visited by the generate visitor
+            if ("org.apache.jasper.compiler.Generator$GenerateVisitor".equals(v.getClass().getName())) {
+                debugSetText = true;
+            }
+
             super.log.info(v.getClass().getName() + " visiting " + this);
+
             v.visit(this);
+
+            debugSetText = false;
         }
 
         /**
@@ -2101,8 +2113,22 @@ abstract class Node implements TagConstants, Serializable {
         }
 
         public void setText(String text) {
-            log.info(this.getClass().getName() + " Set text (setter)=" + text);
+            if (debugSetText) {
+                log.info(this.getClass().getName() + " Set text (setter)=" + text + " at " + getStackTrace());
+            } else  {
+                log.info(this.getClass().getName() + " Set text (setter)=" + text);
+            }
+
             this.text = text;
+        }
+
+        private String getStackTrace() {
+            final StringWriter sw = new StringWriter();
+            final PrintWriter pw = new PrintWriter(sw);
+
+            new Exception().printStackTrace(pw);
+            pw.flush();
+            return sw.toString();
         }
 
         /**
