@@ -142,6 +142,9 @@
         <code>RemoteIpFilter</code> determines that this request was submitted
         via a secure channel. (lihan)
       </fix>
+      <fix>
+        Avoid protocol relative redirects in FORM authentication. (markt)
+      </fix>
     </changelog>
   </subsection>
   <subsection name="Web applications">
