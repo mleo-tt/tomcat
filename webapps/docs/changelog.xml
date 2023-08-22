@@ -114,6 +114,9 @@
       <update>
         Update to Commons Daemon 1.3.2. (markt)
       </update>
+      <fix>
+        Avoid protocol relative redirects in FORM authentication. (markt)
+      </fix>
     </changelog>
   </subsection>
 </section>
