@@ -33,7 +33,7 @@ version.major=10
 version.minor=1
 version.build=12
 version.patch=0
-version.suffix=-TT.1
+version.suffix=-TT.0
 version.dev=
 
 # ----- Build tools -----
