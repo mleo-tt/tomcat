@@ -2647,6 +2647,7 @@ skip.installer property in build.properties" />
   </target>
 
   <target name="installer-sign"
+      unless="skip.installer"
       description="Builds and optionally signs the Windows installer"
       depends="-installer,setup-jsign" if="${do.codesigning}" >
     <jsign file="${tomcat.release}/v${version}/bin/${final.name}.exe"
