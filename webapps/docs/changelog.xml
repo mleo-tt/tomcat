@@ -75,6 +75,9 @@
         Sakhare. (markt)
       </add>
       <fix>
+        Avoid protocol relative redirects in FORM authentication. (markt)
+      </fix>
+      <fix>
         <bug>64226</bug>: Reset timezone after parsing a date since the date
         format is reused. Test case submitted by Gary Thomas. (remm)
       </fix>
