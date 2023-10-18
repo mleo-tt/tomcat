@@ -133,6 +133,10 @@
         <code>RemoteIpFilter</code> determines that this request was submitted
         via a secure channel. (lihan)
       </fix>
+      <add>
+        Improve handling of failures within <code>recycle()</code> methods.
+        (markt)
+      </add>
     </changelog>
   </subsection>
   <subsection name="Coyote">
