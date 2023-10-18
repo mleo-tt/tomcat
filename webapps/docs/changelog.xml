@@ -150,6 +150,9 @@
         malformed <code>content-length</code> header should always be rejected
         with a 400 response. (markt)
       </fix>
+      <fix>
+        Align validation of HTTP trailer fields with standard fields. (markt)
+      </fix>
     </changelog>
   </subsection>
   <subsection name="Jasper">
