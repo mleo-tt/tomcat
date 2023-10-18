@@ -1896,16 +1896,6 @@ class Http2UpgradeHandler extends AbstractStream implements InternalHttpUpgradeH
         }
     }
 
-    @Override
-    public void priorityUpdate(int prioritizedStreamID, Priority p) throws Http2Exception {
-        increaseOverheadCount(FrameType.PRIORITY_UPDATE);
-        AbstractNonZeroStream abstractNonZeroStream = getAbstractNonZeroStream(prioritizedStreamID, true);
-        if (abstractNonZeroStream instanceof Stream) {
-            Stream stream = (Stream) abstractNonZeroStream;
-            stream.setUrgency(p.getUrgency());
-            stream.setIncremental(p.getIncremental());
-        }
-    }
 
     @Override
     public void onSwallowedUnknownFrame(int streamId, int frameTypeId, int flags, int size)
