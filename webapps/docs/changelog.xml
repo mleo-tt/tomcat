@@ -133,6 +133,10 @@
         <code>RemoteIpFilter</code> determines that this request was submitted
         via a secure channel. (lihan)
       </fix>
+      <add>
+        Improve handling of failures within <code>recycle()</code> methods.
+        (markt)
+      </add>
     </changelog>
   </subsection>
   <subsection name="Coyote">
@@ -149,6 +153,9 @@
         Enforce the requirement of RFC 7230 onwards that a request with a
         malformed <code>content-length</code> header should always be rejected
         with a 400 response. (markt)
+      </fix>
+      <fix>
+        Align validation of HTTP trailer fields with standard fields. (markt)
       </fix>
     </changelog>
   </subsection>
