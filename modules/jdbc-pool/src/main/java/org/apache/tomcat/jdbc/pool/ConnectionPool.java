@@ -43,6 +43,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
+import javax.sql.XAConnection;
+
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 
@@ -364,8 +366,10 @@ public class ConnectionPool {
         //cache the constructor
         if (proxyClassConstructor == null ) {
             Class<?> proxyClass = xa ?
-                Proxy.getProxyClass(ConnectionPool.class.getClassLoader(), new Class[] {java.sql.Connection.class,javax.sql.PooledConnection.class, javax.sql.XAConnection.class}) :
-                Proxy.getProxyClass(ConnectionPool.class.getClassLoader(), new Class[] {java.sql.Connection.class,javax.sql.PooledConnection.class});
+                    Proxy.getProxyClass(ConnectionPool.class.getClassLoader(),
+                            new Class[] {Connection.class, javax.sql.PooledConnection.class, XAConnection.class}) :
+                    Proxy.getProxyClass(ConnectionPool.class.getClassLoader(),
+                            new Class[] {Connection.class, javax.sql.PooledConnection.class});
             proxyClassConstructor = proxyClass.getConstructor(new Class[] { InvocationHandler.class });
         }
         return proxyClassConstructor;
