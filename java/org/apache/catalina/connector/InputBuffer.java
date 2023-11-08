@@ -314,10 +314,12 @@ public class InputBuffer extends Reader
 
         try {
             return coyoteRequest.doRead(this);
+        } catch (BadRequestException bre) {
+            coyoteRequest.setErrorException(bre);
+            throw bre;
         } catch (IOException ioe) {
             coyoteRequest.setErrorException(ioe);
-            // An IOException on a read is almost always due to
-            // the remote client aborting the request.
+            // Any other IOException on a read is almost always due to the remote client aborting the request.
             throw new ClientAbortException(ioe);
         }
     }

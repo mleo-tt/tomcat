@@ -31,7 +31,7 @@ import org.apache.catalina.Container;
 import org.apache.catalina.Context;
 import org.apache.catalina.Globals;
 import org.apache.catalina.LifecycleException;
-import org.apache.catalina.connector.ClientAbortException;
+import org.apache.catalina.connector.BadRequestException;
 import org.apache.catalina.connector.Request;
 import org.apache.catalina.connector.Response;
 import org.apache.catalina.valves.ValveBase;
@@ -199,7 +199,7 @@ final class StandardWrapperValve extends ValveBase {
                 }
 
             }
-        } catch (ClientAbortException | CloseNowException e) {
+        } catch (BadRequestException | CloseNowException e) {
             if (container.getLogger().isDebugEnabled()) {
                 container.getLogger().debug(sm.getString(
                         "standardWrapper.serviceException", wrapper.getName(),
@@ -235,11 +235,9 @@ final class StandardWrapperValve extends ValveBase {
             // do not want to do exception(request, response, e) processing
         } catch (ServletException e) {
             Throwable rootCause = StandardWrapper.getRootCause(e);
-            if (!(rootCause instanceof ClientAbortException)) {
-                container.getLogger().error(sm.getString(
-                        "standardWrapper.serviceExceptionRoot",
-                        wrapper.getName(), context.getName(), e.getMessage()),
-                        rootCause);
+            if (!(rootCause instanceof BadRequestException)) {
+                container.getLogger().error(sm.getString("standardWrapper.serviceExceptionRoot", wrapper.getName(),
+                        context.getName(), e.getMessage()), rootCause);
             }
             throwable = e;
             exception(request, response, e);
