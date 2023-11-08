@@ -300,6 +300,7 @@ public class InputBuffer extends Reader
      *
      * @throws IOException An underlying IOException occurred
      */
+    @SuppressWarnings("deprecation")
     @Override
     public int realReadBytes() throws IOException {
         if (closed) {
