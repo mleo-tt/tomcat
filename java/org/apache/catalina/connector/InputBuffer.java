@@ -33,7 +33,7 @@ import jakarta.servlet.RequestDispatcher;
 
 import org.apache.catalina.security.SecurityUtil;
 import org.apache.coyote.ActionCode;
-import org.apache.coyote.Request;
+import org.apache.coyote.BadRequestException;
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 import org.apache.tomcat.util.buf.B2CConverter;
@@ -109,7 +109,7 @@ public class InputBuffer extends Reader
     /**
      * Associated Coyote request.
      */
-    private Request coyoteRequest;
+    private org.apache.coyote.Request coyoteRequest;
 
 
     /**
@@ -168,7 +168,7 @@ public class InputBuffer extends Reader
      *
      * @param coyoteRequest Associated Coyote request
      */
-    public void setRequest(Request coyoteRequest) {
+    public void setRequest(org.apache.coyote.Request coyoteRequest) {
         this.coyoteRequest = coyoteRequest;
     }
 
@@ -216,8 +216,7 @@ public class InputBuffer extends Reader
     public int available() {
         int available = availableInThisBuffer();
         if (available == 0) {
-            coyoteRequest.action(ActionCode.AVAILABLE,
-                    Boolean.valueOf(coyoteRequest.getReadListener() != null));
+            coyoteRequest.action(ActionCode.AVAILABLE, Boolean.valueOf(coyoteRequest.getReadListener() != null));
             available = (coyoteRequest.getAvailable() > 0) ? 1 : 0;
         }
         return available;
