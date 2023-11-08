@@ -23,6 +23,9 @@ import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+
+import javax.servlet.RequestDispatcher;
 
 import org.apache.catalina.security.SecurityUtil;
 import org.apache.coyote.ActionCode;
@@ -287,10 +290,28 @@ public class InputBuffer extends Reader
             state = BYTE_STATE;
         }
 
-        int result = coyoteRequest.doRead(bb);
-
-        return result;
-
+        try {
+            return coyoteRequest.doRead(bb);
+        } catch (BadRequestException bre) {
+            // Set flag used by asynchronous processing to detect errors on non-container threads
+            coyoteRequest.setErrorException(bre);
+            // In synchronous processing, this exception may be swallowed by the application so set error flags here.
+            coyoteRequest.setAttribute(RequestDispatcher.ERROR_EXCEPTION, bre);
+            coyoteRequest.getResponse().setStatus(400);
+            coyoteRequest.getResponse().setError();
+            // Make the exception visible to the application
+            throw bre;
+        } catch (IOException ioe) {
+            // Set flag used by asynchronous processing to detect errors on non-container threads
+            coyoteRequest.setErrorException(ioe);
+            // In synchronous processing, this exception may be swallowed by the application so set error flags here.
+            coyoteRequest.setAttribute(RequestDispatcher.ERROR_EXCEPTION, ioe);
+            coyoteRequest.getResponse().setStatus(400);
+            coyoteRequest.getResponse().setError();
+            // Any other IOException on a read is almost always due to the remote client aborting the request.
+            // Make the exception visible to the application
+            throw new ClientAbortException(ioe);
+        }
     }
 
 
