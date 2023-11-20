@@ -154,6 +154,9 @@
         Include the problematic data in the error message when reporting that
         the provided request line contains an invalid component. (markt)
       </fix>
+      <fix>
+        Align validation of HTTP trailer fields with standard fields. (markt)
+      </fix>
     </changelog>
   </subsection>
   <subsection name="Jasper">
