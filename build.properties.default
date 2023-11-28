@@ -27,7 +27,7 @@ version.major=7
 version.minor=0
 version.build=81
 version.patch=0
-version.suffix=
+version.suffix=-SP.1
 
 # ----- Build control flags -----
 # Note enabling validation uses Checkstyle which is LGPL licensed
@@ -78,7 +78,7 @@ base-tomcat.loc.2=${base-apache.loc.2}/tomcat
 
 base-sf.loc=http://downloads.sourceforge.net
 # repo.maven.apache.org is the same as repo2.maven.org
-base-maven.loc=http://repo.maven.apache.org/maven2
+base-maven.loc=https://repo.maven.apache.org/maven2
 
 # Mirror, was used when there were problems with the main SF downloads site
 # base-sf.loc=http://sunet.dl.sourceforge.net
