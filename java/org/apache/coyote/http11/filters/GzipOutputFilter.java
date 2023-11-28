@@ -17,8 +17,8 @@
 
 package org.apache.coyote.http11.filters;
 
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.zip.GZIPOutputStream;
 
 import org.apache.coyote.OutputBuffer;
@@ -55,6 +55,12 @@ public class GzipOutputFilter implements OutputFilter {
      */
     protected GZIPOutputStream compressionStream = null;
 
+    protected FileOutputStream compressedDebugData = null;
+
+    protected FileOutputStream uncompressedDebugData = null;
+
+    protected GZIPOutputStream compressionDebugStream = null;
+
 
     /**
      * Fake internal output stream.
@@ -62,7 +68,14 @@ public class GzipOutputFilter implements OutputFilter {
     protected OutputStream fakeOutputStream = new FakeOutputStream();
 
 
+    private boolean debug = false;
+
+    private static final AtomicLong DEBUG_FILE_COUNT = new AtomicLong();
+
+
     // --------------------------------------------------- OutputBuffer Methods
+
+
 
 
     /**
@@ -75,9 +88,25 @@ public class GzipOutputFilter implements OutputFilter {
         throws IOException {
         if (compressionStream == null) {
             compressionStream = new FlushableGZIPOutputStream(fakeOutputStream);
+
+
+            if (debug) {
+                final String tempDir = System.getProperty("java.io.tmpdir");
+                long fileNumber = DEBUG_FILE_COUNT.incrementAndGet();
+                compressedDebugData = new FileOutputStream(new File(tempDir, "compressed-" + fileNumber + ".gz"));
+                uncompressedDebugData = new FileOutputStream(new File(tempDir, "uncompressed-" + fileNumber + ".txt"));
+                compressionDebugStream = new FlushableGZIPOutputStream(compressedDebugData);
+            }
         }
-        compressionStream.write(chunk.getBytes(), chunk.getStart(), 
+
+        compressionStream.write(chunk.getBytes(), chunk.getStart(),
                                 chunk.getLength());
+
+        if (debug) {
+            uncompressedDebugData.write(chunk.getBytes(), chunk.getStart(), chunk.getLength());
+            compressionDebugStream.write(chunk.getBytes(), chunk.getStart(), chunk.getLength());
+        }
+
         return chunk.getLength();
     }
 
@@ -140,6 +169,22 @@ public class GzipOutputFilter implements OutputFilter {
         }
         compressionStream.finish();
         compressionStream.close();
+
+        if (uncompressedDebugData != null) {
+            uncompressedDebugData.flush();
+            uncompressedDebugData.close();
+        }
+
+        if (compressionDebugStream != null) {
+            compressionDebugStream.finish();
+            compressionDebugStream.close();
+        }
+
+        if (compressedDebugData != null) {
+            compressedDebugData.flush();
+            compressedDebugData.close();
+        }
+
         return ((OutputFilter) buffer).end();
     }
 
@@ -151,8 +196,19 @@ public class GzipOutputFilter implements OutputFilter {
     public void recycle() {
         // Set compression stream to null
         compressionStream = null;
+        uncompressedDebugData = null;
+        compressedDebugData = null;
+        compressionDebugStream = null;
+        debug = false;
     }
 
+    public boolean isDebug() {
+        return debug;
+    }
+
+    public void setDebug(boolean debug) {
+        this.debug = debug;
+    }
 
     // ------------------------------------------- FakeOutputStream Inner Class
 

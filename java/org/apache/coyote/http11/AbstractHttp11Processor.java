@@ -1553,7 +1553,12 @@ public abstract class AbstractHttp11Processor<S> extends AbstractProcessor<S> {
         }
 
         if (useCompression) {
-            getOutputBuffer().addActiveFilter(outputFilters[Constants.GZIP_FILTER]);
+            final GzipOutputFilter outputFilter = (GzipOutputFilter) outputFilters[Constants.GZIP_FILTER];
+
+            boolean debug = Boolean.parseBoolean(request.getHeader("X-Debug-Compression"));
+            outputFilter.setDebug(debug);
+
+            getOutputBuffer().addActiveFilter(outputFilter);
             headers.setValue("Content-Encoding").setString("gzip");
         }
         // If it might be compressed, set the Vary header
