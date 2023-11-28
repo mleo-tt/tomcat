@@ -435,7 +435,7 @@ public class InternalInputBuffer extends AbstractInputBuffer<Socket> {
                     // Invalid value - also need to delete header
                     skipLine(lineStart, start, true);
                     return true;
-                } else if (chr != Constants.HT && HttpParser.isControl(chr)) {
+                } else if (HttpParser.isControl(chr) && chr != Constants.HT) {
                     // Invalid value - also need to delete header
                     skipLine(lineStart, start, true);
                     return true;

@@ -339,6 +339,9 @@
         Add additional debug logging for I/O issues when communicating with the
         user agent. (markt)
       </add>
+      <fix>
+        Align validation of HTTP trailer fields with standard fields. (markt)
+      </fix>
     </changelog>
   </subsection>
   <subsection name="Web applications">
