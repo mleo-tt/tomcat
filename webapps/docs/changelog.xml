@@ -145,6 +145,10 @@
       <fix>
         Avoid protocol relative redirects in FORM authentication. (markt)
       </fix>
+      <add>
+        Improve handling of failures within <code>recycle()</code> methods.
+        (markt)
+      </add>
     </changelog>
   </subsection>
   <subsection name="Web applications">

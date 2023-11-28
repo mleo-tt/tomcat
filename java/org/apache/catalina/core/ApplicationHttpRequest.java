@@ -45,7 +45,7 @@ import org.apache.tomcat.util.buf.B2CConverter;
 import org.apache.tomcat.util.buf.MessageBytes;
 import org.apache.tomcat.util.http.Parameters;
 import org.apache.tomcat.util.res.StringManager;
-
+import org.apache.tomcat.util.ExceptionUtils;
 
 /**
  * Wrapper around a <code>javax.servlet.http.HttpServletRequest</code>
@@ -645,7 +645,12 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
      */
     public void recycle() {
         if (session != null) {
-            session.endAccess();
+            try {
+                session.endAccess();
+            } catch (Throwable t) {
+                ExceptionUtils.handleThrowable(t);
+                context.getLogger().warn(sm.getString("applicationHttpRequest.sessionEndAccessFail"), t);
+            }
         }
     }
 
