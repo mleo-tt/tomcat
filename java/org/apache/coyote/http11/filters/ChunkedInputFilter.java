@@ -31,6 +31,7 @@ import org.apache.tomcat.util.buf.HexUtils;
 import org.apache.tomcat.util.buf.MessageBytes;
 import org.apache.tomcat.util.http.MimeHeaders;
 import org.apache.tomcat.util.res.StringManager;
+import org.apache.tomcat.util.http.parser.HttpParser;
 
 /**
  * Chunked input filter. Parses chunked data according to
@@ -506,6 +507,9 @@ public class ChunkedInputFilter implements InputFilter {
 
             if (chr == Constants.COLON) {
                 colon = true;
+            } else if (!HttpParser.isToken(chr)) {
+                // Non-token characters are illegal in header names
+                throw new IOException(sm.getString("chunkedInputFilter.invalidTrailerHeaderName"));
             } else {
                 trailingHeaders.append(chr);
             }
@@ -567,7 +571,9 @@ public class ChunkedInputFilter implements InputFilter {
                 if (chr == Constants.CR || chr == Constants.LF) {
                     parseCRLF(true);
                     eol = true;
-                } else if (chr == Constants.SP) {
+                } else if (HttpParser.isControl(chr) && chr != Constants.HT) {
+                    throw new IOException(sm.getString("chunkedInputFilter.invalidTrailerHeaderValue"));
+                } else if (chr == Constants.SP || chr == Constants.HT) {
                     trailingHeaders.append(chr);
                 } else {
                     trailingHeaders.append(chr);

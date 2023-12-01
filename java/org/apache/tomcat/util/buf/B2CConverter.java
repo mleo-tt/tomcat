@@ -27,12 +27,16 @@ import java.nio.charset.CodingErrorAction;
 import java.util.Locale;
 
 import org.apache.tomcat.util.res.StringManager;
+import org.apache.juli.logging.Log;
+import org.apache.juli.logging.LogFactory;
+import org.apache.tomcat.util.ExceptionUtils;
 
 /**
  * NIO based character decoder.
  */
 public class B2CConverter {
 
+    private static final Log log = LogFactory.getLog(B2CConverter.class);
     private static final StringManager sm =
         StringManager.getManager(Constants.Package);
 
@@ -133,7 +137,12 @@ public class B2CConverter {
      * Reset the decoder state.
      */
     public void recycle() {
-        decoder.reset();
+        try {
+            decoder.reset();
+        } catch (Throwable t) {
+            ExceptionUtils.handleThrowable(t);
+            log.warn(sm.getString("b2cConverter.decoderResetFail", decoder.charset()), t);
+        }
         leftovers.position(0);
     }
 
