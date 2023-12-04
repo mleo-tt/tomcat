@@ -140,6 +140,13 @@ public final class Request {
     private int available = 0;
 
     private RequestInfo reqProcessorMX=new RequestInfo(this);
+
+
+    /**
+     * Holds request body reading error exception.
+     */
+    private Exception errorException = null;
+
     // ------------------------------------------------------------- Properties
 
 
@@ -446,6 +453,33 @@ public final class Request {
         return n;
     }
 
+    // -------------------- Error tracking --------------------
+
+    /**
+     * Set the error Exception that occurred during the writing of the response processing.
+     *
+     * @param ex The exception that occurred
+     */
+    public void setErrorException(Exception ex) {
+        errorException = ex;
+    }
+
+
+    /**
+     * Get the Exception that occurred during the writing of the response.
+     *
+     * @return The exception that occurred
+     */
+    public Exception getErrorException() {
+        return errorException;
+    }
+
+
+    public boolean isExceptionPresent() {
+        return errorException != null;
+    }
+
+
 
     // -------------------- debug --------------------
 
@@ -527,6 +561,8 @@ public final class Request {
         remoteUserNeedsAuthorization = false;
         authType.recycle();
         attributes.clear();
+
+        errorException = null;
 
         startTime = -1;
     }
