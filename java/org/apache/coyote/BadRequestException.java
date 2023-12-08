@@ -14,59 +14,55 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.catalina.connector;
+package org.apache.coyote;
 
-import org.apache.coyote.BadRequestException;
+import java.io.IOException;
 
 /**
- * Extend IOException to identify it as being caused by an abort of a request by
- * a remote client.
- *
- * @author Glenn L. Nielsen
+ * Extend IOException to identify it as being caused by a bad request from a remote client.
  */
-public final class ClientAbortException extends BadRequestException {
+public class BadRequestException extends IOException {
 
     private static final long serialVersionUID = 1L;
 
 
-    //------------------------------------------------------------ Constructors
+    // ------------------------------------------------------------ Constructors
 
     /**
-     * Construct a new ClientAbortException with no other information.
+     * Construct a new BadRequestException with no other information.
      */
-    public ClientAbortException() {
+    public BadRequestException() {
         super();
     }
 
 
     /**
-     * Construct a new ClientAbortException for the specified message.
+     * Construct a new BadRequestException for the specified message.
      *
      * @param message Message describing this exception
      */
-    public ClientAbortException(String message) {
+    public BadRequestException(String message) {
         super(message);
     }
 
 
     /**
-     * Construct a new ClientAbortException for the specified throwable.
+     * Construct a new BadRequestException for the specified throwable.
      *
      * @param throwable Throwable that caused this exception
      */
-    public ClientAbortException(Throwable throwable) {
+    public BadRequestException(Throwable throwable) {
         super(throwable);
     }
 
 
     /**
-     * Construct a new ClientAbortException for the specified message
-     * and throwable.
+     * Construct a new BadRequestException for the specified message and throwable.
      *
-     * @param message Message describing this exception
+     * @param message   Message describing this exception
      * @param throwable Throwable that caused this exception
      */
-    public ClientAbortException(String message, Throwable throwable) {
+    public BadRequestException(String message, Throwable throwable) {
         super(message, throwable);
     }
 }
