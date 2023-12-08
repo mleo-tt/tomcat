@@ -149,6 +149,11 @@ public abstract class Http2TestBase extends TomcatBaseTest {
 
 
     protected void validateHttp2InitialResponse() throws Exception {
+        validateHttp2InitialResponse(200);
+    }
+
+    protected void validateHttp2InitialResponse(long maxConcurrentStreams) throws Exception {
+
         // - 101 response acts as acknowledgement of the HTTP2-Settings header
         // Need to read 5 frames
         // - settings (server settings - must be first)
@@ -598,6 +603,11 @@ public abstract class Http2TestBase extends TomcatBaseTest {
     }
 
     protected void enableHttp2(long maxConcurrentStreams, boolean tls) {
+        enableHttp2(maxConcurrentStreams, tls, 10000, 10000, 25000, 5000, 5000);
+    }
+
+    protected void enableHttp2(long maxConcurrentStreams, boolean tls, long readTimeout, long writeTimeout,
+            long keepAliveTimeout, long streamReadTimout, long streamWriteTimeout) {
         Tomcat tomcat = getTomcatInstance();
         Connector connector = tomcat.getConnector();
         Assert.assertTrue(connector.setProperty("useAsyncIO", Boolean.toString(useAsyncIO)));
