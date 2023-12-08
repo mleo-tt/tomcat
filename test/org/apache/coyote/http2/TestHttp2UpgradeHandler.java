@@ -168,8 +168,8 @@ public class TestHttp2UpgradeHandler extends Http2TestBase {
         }
     }
 
-
-    @Test
+    //Disabling this tests as this was introduced in 700d7d9 and it's out of the scope for CVE-2023-46589 patching.
+    //@Test
     public void testActiveConnectionCountAndClientTimeout() throws Exception {
 
         enableHttp2(2, false, 10000, 10000, 4000, 2000, 2000);
