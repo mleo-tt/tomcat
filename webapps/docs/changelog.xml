@@ -189,6 +189,11 @@
       <fix>
         Improvements to HTTP/2 overhead protection. (markt)
       </fix>
+      <fix>
+        Remove the remaining reference to a stream once the stream has been
+        recycled. This makes the stream eligible for garbage collection earlier
+        and thereby improves scalability. (markt)
+      </fix>
     </changelog>
   </subsection>
   <subsection name="Jasper">
