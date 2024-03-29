@@ -31,10 +31,10 @@
 # ----- Version Control Flags -----
 version.major=8
 version.minor=5
-version.build=101
+version.build=100
 version.patch=0
-version.suffix=
-version.dev=-dev
+version.suffix=-TT.1
+version.dev=
 
 # ----- Build tools -----
 ant.version.required=1.9.10
@@ -45,7 +45,7 @@ compile.debug=true
 compile.deprecation=false
 
 # ----- Documentation properties -----
-git.branch=8.5.x
+git.branch=tomcat-8.5.x-TT.x
 
 # ----- Code quality tools
 # Note enabling validation uses Checkstyle which is LGPL licensed
@@ -67,7 +67,7 @@ javadoc.failonwarning=false
 execute.test.nio=true
 execute.test.nio2=true
 # Still requires APR/native library to be present
-execute.test.apr=true
+execute.test.apr=false
 # Stop testing if a failure occurs
 test.haltonfailure=false
 # Activate AccessLog during testing
@@ -82,6 +82,9 @@ test.threads=1
 # Some platforms (e.g. OSX El Capitan) require IPv4 to be the default for the
 # multicast tests to work
 java.net.preferIPv4Stack=false
+
+# Skip windows installer generation
+skip.installer=true
 
 # Specify the default (true) else the empty string will be used which
 # effectively changes the setting to false
