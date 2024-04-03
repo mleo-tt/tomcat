@@ -478,6 +478,11 @@
         endpoint via a forward proxy that requires authentication. Based on a
         patch provided by Joe Mokos. (markt)
       </add>
+      <fix>
+        Ensure that WebSocket connection closure completes if the connection is
+        closed when the server side has used the proprietary suspend/resume
+        feature to suspend the connection. (markt)
+      </fix>
     </changelog>
   </subsection>
   <subsection name="Other">
