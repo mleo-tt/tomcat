@@ -204,6 +204,10 @@
         Correct a race condition that could cause spurious RST messages to be
         sent after the response had been written to an HTTP/2 stream. (markt)
       </fix>
+      <fix>
+        Make counting of active HTTP/2 streams per connection more robust.
+        (markt)
+      </fix>
     </changelog>
   </subsection>
   <subsection name="Jasper">
