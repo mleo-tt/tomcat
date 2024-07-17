@@ -296,6 +296,11 @@ class Http2UpgradeHandler extends AbstractStream implements InternalHttpUpgradeH
     }
 
 
+    protected void decrementActiveRemoteStreamCount(Stream stream) {
+        setConnectionTimeoutForStreamCount(stream.decrementAndGetActiveRemoteStreamCount());
+    }
+
+
     void processStreamOnContainerThread(StreamProcessor streamProcessor, SocketEvent event) {
         StreamRunnable streamRunnable = new StreamRunnable(streamProcessor, event);
         if (streamConcurrency == null) {
@@ -593,7 +598,11 @@ class Http2UpgradeHandler extends AbstractStream implements InternalHttpUpgradeH
         // order.
         synchronized (socketWrapper) {
             if (state != null) {
+                boolean active = state.isActive();
                 state.sendReset();
+                if (active) {
+                    decrementActiveRemoteStreamCount(getStream(se.getStreamId()));
+                }
             }
             socketWrapper.write(true, rstFrame, 0, rstFrame.length);
             socketWrapper.flush(true);
@@ -1161,7 +1170,7 @@ class Http2UpgradeHandler extends AbstractStream implements InternalHttpUpgradeH
     }
 
 
-    private Stream getStream(int streamId) {
+    Stream getStream(int streamId) {
         Integer key = Integer.valueOf(streamId);
         AbstractStream result = streams.get(key);
         if (result instanceof Stream) {
@@ -1617,20 +1626,6 @@ class Http2UpgradeHandler extends AbstractStream implements InternalHttpUpgradeH
 
 
     @Override
-    public void receivedEndOfStream(int streamId) throws ConnectionException {
-        AbstractNonZeroStream abstractNonZeroStream =
-                getAbstractNonZeroStream(streamId, connectionState.get().isNewStreamAllowed());
-        if (abstractNonZeroStream instanceof Stream) {
-            Stream stream = (Stream) abstractNonZeroStream;
-            stream.receivedEndOfStream();
-            if (!stream.isActive()) {
-                setConnectionTimeoutForStreamCount(activeRemoteStreamCount.decrementAndGet());
-            }
-        }
-    }
-
-
-    @Override
     public void onSwallowedDataFramePayload(int streamId, int swallowedDataBytesCount) throws IOException {
         AbstractNonZeroStream abstractNonZeroStream = getAbstractNonZeroStream(streamId);
         writeWindowUpdate(abstractNonZeroStream, swallowedDataBytesCount, false);
@@ -1649,6 +1644,7 @@ class Http2UpgradeHandler extends AbstractStream implements InternalHttpUpgradeH
             Stream stream = getStream(streamId, false);
             if (stream == null) {
                 stream = createRemoteStream(streamId);
+                activeRemoteStreamCount.incrementAndGet();
             }
             if (streamId < maxActiveRemoteStreamId) {
                 throw new ConnectionException(sm.getString("upgradeHandler.stream.old",
@@ -1732,17 +1728,17 @@ class Http2UpgradeHandler extends AbstractStream implements InternalHttpUpgradeH
 
 
     @Override
-    public void headersEnd(int streamId) throws Http2Exception {
+    public void headersEnd(int streamId, boolean endOfStream) throws Http2Exception {
         AbstractNonZeroStream abstractNonZeroStream =
                 getAbstractNonZeroStream(streamId, connectionState.get().isNewStreamAllowed());
         if (abstractNonZeroStream instanceof Stream) {
+            boolean processStream = false;
             setMaxProcessedStream(streamId);
             Stream stream = (Stream) abstractNonZeroStream;
             if (stream.isActive()) {
                 if (stream.receivedEndOfHeaders()) {
-
-                    if (localSettings.getMaxConcurrentStreams() < activeRemoteStreamCount.incrementAndGet()) {
-                        setConnectionTimeoutForStreamCount(activeRemoteStreamCount.decrementAndGet());
+                    if (localSettings.getMaxConcurrentStreams() < activeRemoteStreamCount.get()) {
+                        decrementActiveRemoteStreamCount(stream);
                         // Ignoring maxConcurrentStreams increases the overhead count
                         increaseOverheadCount(FrameType.HEADERS);
                         throw new StreamException(sm.getString("upgradeHandler.tooManyRemoteStreams",
@@ -1752,9 +1748,40 @@ class Http2UpgradeHandler extends AbstractStream implements InternalHttpUpgradeH
                     // Valid new stream reduces the overhead count
                     reduceOverheadCount(FrameType.HEADERS);
 
-                    processStreamOnContainerThread(stream);
+                    processStream = true;
                 }
             }
+            /*
+             *  Need to process end of stream before calling processStreamOnContainerThread to avoid a race condition
+             *  where the container thread finishes before end of stream is processed, thinks the request hasn't been
+             *  fully read so issues a RST with error code 0 (NO_ERROR) to tell the client not to send the request body,
+             *  if any. This breaks tests and generates unnecessary RST messages for standard clients.
+             */
+            if (endOfStream) {
+                receivedEndOfStream(stream);
+            }
+            if (processStream) {
+                processStreamOnContainerThread(stream);
+            }
+        }
+    }
+
+
+    @Override
+    public void receivedEndOfStream(int streamId) throws ConnectionException {
+        AbstractNonZeroStream abstractNonZeroStream =
+                getAbstractNonZeroStream(streamId, connectionState.get().isNewStreamAllowed());
+        if (abstractNonZeroStream instanceof Stream) {
+            Stream stream = (Stream) abstractNonZeroStream;
+            receivedEndOfStream(stream);
+        }
+    }
+
+
+    private void receivedEndOfStream(Stream stream) throws ConnectionException {
+        stream.receivedEndOfStream();
+        if (!stream.isActive()) {
+            decrementActiveRemoteStreamCount(stream);
         }
     }
 
@@ -1780,7 +1807,7 @@ class Http2UpgradeHandler extends AbstractStream implements InternalHttpUpgradeH
             boolean active = stream.isActive();
             stream.receiveReset(errorCode);
             if (active) {
-                activeRemoteStreamCount.decrementAndGet();
+                decrementActiveRemoteStreamCount(stream);
             }
         }
     }

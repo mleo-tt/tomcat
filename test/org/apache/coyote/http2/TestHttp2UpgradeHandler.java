@@ -168,8 +168,9 @@ public class TestHttp2UpgradeHandler extends Http2TestBase {
         }
     }
 
-    //Disabling this tests as this was introduced in 700d7d9 and it's out of the scope for CVE-2023-46589 patching.
-    //@Test
+    //CH: Enabling this test but updated to return 400 since that was later introduced in 10.1.x via
+    //commit dc38c17394916d6d2bf19da664e0a89660f3cdd1
+    @Test
     public void testActiveConnectionCountAndClientTimeout() throws Exception {
 
         enableHttp2(2, false, 10000, 10000, 4000, 2000, 2000);
@@ -203,8 +204,9 @@ public class TestHttp2UpgradeHandler extends Http2TestBase {
 
             // 400 response (triggered by IOException trying to read body that never arrived)
             parser.readFrame();
-            Assert.assertTrue(output.getTrace(),
-                    output.getTrace().startsWith(stream + "-HeadersStart\n" + stream + "-Header-[:status]-[400]\n"));
+            Assert.assertTrue(output.getTrace(), output.getTrace().startsWith(
+                    stream + "-HeadersStart\n" +
+                    stream + "-Header-[:status]-[400]\n"));
             output.clearTrace();
 
             // reset frame

@@ -171,6 +171,12 @@
   <subsection name="Coyote">
     <changelog>
       <fix>
+        When an HTTP/2 stream was reset, the current active stream count was not
+        reduced. If enough resets occurred on a connection, the current active
+        stream count limit was reached and no new streams could be created on
+        that connection. (markt)
+      </fix>
+      <fix>
         <bug>66276</bug>: Fix incorrect class cast when adding
         a descendant of HTTP/2 streams. (lihan)
       </fix>
@@ -193,6 +199,14 @@
         Remove the remaining reference to a stream once the stream has been
         recycled. This makes the stream eligible for garbage collection earlier
         and thereby improves scalability. (markt)
+      </fix>
+      <fix>
+        Correct a race condition that could cause spurious RST messages to be
+        sent after the response had been written to an HTTP/2 stream. (markt)
+      </fix>
+      <fix>
+        Make counting of active HTTP/2 streams per connection more robust.
+        (markt)
       </fix>
     </changelog>
   </subsection>

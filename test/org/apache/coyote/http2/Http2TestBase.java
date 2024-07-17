@@ -167,7 +167,7 @@ public abstract class Http2TestBase extends TomcatBaseTest {
         parser.readFrame();
         parser.readFrame();
 
-        Assert.assertEquals("0-Settings-[3]-[200]\n" +
+        Assert.assertEquals("0-Settings-[3]-[" + maxConcurrentStreams + "]\n" +
                 "0-Settings-End\n" +
                 "0-Settings-Ack\n" +
                 "0-Ping-[0,0,0,0,0,0,0,1]\n" +
@@ -613,11 +613,11 @@ public abstract class Http2TestBase extends TomcatBaseTest {
         Assert.assertTrue(connector.setProperty("useAsyncIO", Boolean.toString(useAsyncIO)));
         http2Protocol = new UpgradableHttp2Protocol();
         // Short timeouts for now. May need to increase these for CI systems.
-        http2Protocol.setReadTimeout(10000);
-        http2Protocol.setWriteTimeout(10000);
-        http2Protocol.setKeepAliveTimeout(25000);
-        http2Protocol.setStreamReadTimeout(5000);
-        http2Protocol.setStreamWriteTimeout(5000);
+        http2Protocol.setReadTimeout(readTimeout);
+        http2Protocol.setWriteTimeout(writeTimeout);
+        http2Protocol.setKeepAliveTimeout(keepAliveTimeout);
+        http2Protocol.setStreamReadTimeout(streamReadTimout);
+        http2Protocol.setStreamWriteTimeout(streamWriteTimeout);
         http2Protocol.setMaxConcurrentStreams(maxConcurrentStreams);
         http2Protocol.setHttp11Protocol((AbstractHttp11Protocol<?>) connector.getProtocolHandler());
         connector.addUpgradeProtocol(http2Protocol);
@@ -1088,13 +1088,6 @@ public abstract class Http2TestBase extends TomcatBaseTest {
 
 
         @Override
-        public void receivedEndOfStream(int streamId) {
-            lastStreamId = Integer.toString(streamId);
-            trace.append(lastStreamId + "-EndOfStream\n");
-        }
-
-
-        @Override
         public HeaderEmitter headersStart(int streamId, boolean headersEndStream) {
             lastStreamId = Integer.toString(streamId);
             trace.append(lastStreamId + "-HeadersStart\n");
@@ -1149,8 +1142,18 @@ public abstract class Http2TestBase extends TomcatBaseTest {
 
 
         @Override
-        public void headersEnd(int streamId) {
+        public void headersEnd(int streamId, boolean endOfStream) {
             trace.append(streamId + "-HeadersEnd\n");
+            if (endOfStream) {
+                receivedEndOfStream(streamId) ;
+            }
+        }
+
+
+        @Override
+        public void receivedEndOfStream(int streamId) {
+            lastStreamId = Integer.toString(streamId);
+            trace.append(lastStreamId + "-EndOfStream\n");
         }
 
 
